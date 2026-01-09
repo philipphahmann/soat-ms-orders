@@ -1,0 +1,78 @@
+services:
+  order-service:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: order-service:latest
+    container_name: order-service
+    environment:
+      - SPRING_PROFILES_ACTIVE=dev
+
+      # Banco de Dados
+      - SPRING_DATASOURCE_URL=jdbc:postgresql://order-db:5432/${DB_NAME:-order_db}
+      - SPRING_DATASOURCE_USERNAME=${DB_USER:-postgres}
+      - SPRING_DATASOURCE_PASSWORD=${DB_PASS:-mysecretpassword}
+      - SPRING_FLYWAY_URL=jdbc:postgresql://order-db:5432/${DB_NAME:-order_db}
+      - SPRING_FLYWAY_USER=${DB_USER:-postgres}
+      - SPRING_FLYWAY_PASSWORD=${DB_PASS:-mysecretpassword}
+
+      # Configuração AWS (Apontando para o LocalStack)
+      - AWS_REGION=us-east-1
+      - AWS_ACCESS_KEY=test
+      - AWS_SECRET_KEY=test
+      - AWS_SNS_ENDPOINT=http://localstack:4566
+      - AWS_SQS_ENDPOINT=http://localstack:4566
+
+      # Tópicos e Filas (Devem bater com o script de init)
+      - ORDER_PAYMENTS_TOPIC_ARN=arn:aws:sns:us-east-1:000000000000:order-payments
+      - PAYMENT_STATUS_QUEUE_NAME=payment-status-queue
+    depends_on:
+      - order-db
+      - localstack
+    networks:
+      - soat-net
+    ports:
+      - "8080:8080"
+    restart: unless-stopped
+
+  order-db:
+    image: postgres:15-alpine
+    container_name: order-db
+    environment:
+      - POSTGRES_DB=${DB_NAME:-order_db}
+      - POSTGRES_USER=${DB_USER:-postgres}
+      - POSTGRES_PASSWORD=${DB_PASS:-mysecretpassword}
+    ports:
+      - "5433:5432"
+    networks:
+      - soat-net
+    volumes:
+      - order-db-data:/var/lib/postgresql/data
+    healthcheck:
+      test: [ "CMD-SHELL", "pg_isready -U ${DB_USER:-postgres} -d ${DB_NAME:-order_db}" ]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 10s
+
+  localstack:
+    image: localstack/localstack:3.0
+    container_name: localstack
+    ports:
+      - "4566:4566"
+    environment:
+      - SERVICES=sns,sqs
+      - DOCKER_HOST=unix:///var/run/docker.sock
+    volumes:
+      - ./infra/init-aws.sh:/etc/localstack/init/ready.d/init-aws.sh
+    networks:
+      - soat-net
+
+networks:
+  soat-net:
+    driver: bridge
+    name: soat-net
+
+volumes:
+  order-db-data:
+    name: order-db-data

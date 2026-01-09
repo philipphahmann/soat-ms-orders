@@ -1,0 +1,10 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: order-service
+  namespace: order
+data:
+  DB_URL: ${SPRING_DATASOURCE_URL}
+  app.services.customer-url: "${CUSTOMER_SERVICE_URL}"
+  app.services.product-url: "${PRODUCT_SERVICE_URL}"
+  spring.datasource.url: "${SPRING_DATASOURCE_URL}"
