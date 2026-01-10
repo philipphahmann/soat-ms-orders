@@ -137,3 +137,9 @@ jobs:
           
           echo "Aplicando Kustomization (todos os manifestos)..."
           kubectl apply -k k8s/
+
+          echo "Forçando reinicialização para garantir novas configs..."
+          kubectl rollout restart deployment/order-service -n order
+
+          echo "Aguardando confirmação de sucesso do deploy..."
+          kubectl rollout status deployment/order-service -n order --timeout=120s
