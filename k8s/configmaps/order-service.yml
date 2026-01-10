@@ -4,7 +4,15 @@ metadata:
   name: order-service
   namespace: order
 data:
-  DB_URL: ${SPRING_DATASOURCE_URL}
-  app.services.customer-url: "${CUSTOMER_SERVICE_URL}"
-  app.services.product-url: "${PRODUCT_SERVICE_URL}"
-  spring.datasource.url: "${SPRING_DATASOURCE_URL}"
+  # --- Service Discovery (Comunicação Interna no Cluster) ---
+  CUSTOMER_SERVICE_URL: "http://customer-service-backend.customer-service.svc.cluster.local"
+  PRODUCT_SERVICE_URL: "http://products-app.products.svc.cluster.local"
+
+  # --- Configuração de Banco de Dados (RDS) ---
+  SPRING_DATASOURCE_URL: "${SPRING_DATASOURCE_URL}"
+  SPRING_DATASOURCE_DRIVER_CLASS_NAME: "org.postgresql.Driver"
+
+  # --- AWS Config ---
+  AWS_REGION: "us-east-1"
+  AWS_SNS_ENDPOINT: ""
+  AWS_SQS_ENDPOINT: ""

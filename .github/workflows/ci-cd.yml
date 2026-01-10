@@ -119,12 +119,10 @@ jobs:
 
       - name: 5. Aplicar o Deploy no EKS (com envsubst)
         env:
+          SPRING_DATASOURCE_USERNAME: ${{ secrets.SPRING_DATASOURCE_USERNAME }}
+          SPRING_DATASOURCE_PASSWORD: ${{ secrets.SPRING_DATASOURCE_PASSWORD }}
+          SPRING_DATASOURCE_URL: ${{ secrets.SPRING_DATASOURCE_URL }}
           K8S_IMAGE_TAG: ${{ needs.build_and_push_ecr.outputs.image_uri_digest }}
-          SPRING_DATASOURCE_USERNAME: ${{ secrets.DB_USER_B64 }}
-          SPRING_DATASOURCE_PASSWORD: ${{ secrets.DB_PASS_B64 }}
-          SPRING_DATASOURCE_URL: "jdbc:postgresql://soat-rds-instance-ms-orders.cyxjxfysr67a.us-east-1.rds.amazonaws.com:5432/order"
-          CUSTOMER_SERVICE_URL: "http://a430eb5c6bb444b059eb8f849edb6034-1930496403.us-east-1.elb.amazonaws.com"
-          PRODUCT_SERVICE_URL: "http://a430eb5c6bb444b059eb8f849edb6034-1930496403.us-east-1.elb.amazonaws.com"
         run: |
           set -e
           
@@ -132,7 +130,7 @@ jobs:
           
           kubectl apply -f k8s/namespace.yml
           
-          # Ajustados os nomes dos arquivos para order-service.yml
+          # Substituição de variáveis
           envsubst < k8s/configmaps/order-service.yml | sponge k8s/configmaps/order-service.yml
           envsubst < k8s/secrets/order-service.yml | sponge k8s/secrets/order-service.yml
           envsubst < k8s/deployments/order-service.yml | sponge k8s/deployments/order-service.yml
