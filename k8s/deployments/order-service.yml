@@ -17,20 +17,28 @@ spec:
         - name: ms-order
           image: ${K8S_IMAGE_TAG}
           imagePullPolicy: Always
+          
           ports:
             - containerPort: 8080
+          
           resources:
             requests:
-              cpu: "100m"
-              memory: "512Mi"
-            limits:
-              cpu: "500m"
+              cpu: "250m"
               memory: "1Gi"
+            limits:
+              cpu: "1000m"
+              memory: "1Gi"
+          
+          env:
+            - name: JAVA_TOOL_OPTIONS
+              value: "-XX:MaxRAMPercentage=75.0"
+          
           envFrom:
             - configMapRef:
                 name: order-service
             - secretRef:
                 name: order-service
+          
           startupProbe:
             httpGet:
               path: /actuator/health
@@ -39,6 +47,7 @@ spec:
             timeoutSeconds: 5
             periodSeconds: 5
             initialDelaySeconds: 30
+          
           readinessProbe:
             httpGet:
               path: /actuator/health
@@ -47,6 +56,7 @@ spec:
             periodSeconds: 10
             timeoutSeconds: 5
             failureThreshold: 3
+          
           livenessProbe:
             httpGet:
               path: /actuator/health
