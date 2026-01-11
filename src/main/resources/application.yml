@@ -1,16 +1,28 @@
 server:
   error:
     include-stacktrace: never
+  port: 8081
 
 spring:
   cloud:
     aws:
+      credentials:
+        access-key: ${AWS_ACCESS_KEY_ID}
+        secret-key: ${AWS_SECRET_ACCESS_KEY}
+        session-token: ${AWS_SESSION_TOKEN}
       region:
-        static: ${AWS_REGION:us-east-1}
-      sns:
-        endpoint: ${AWS_SNS_ENDPOINT:http://localhost:4566}
+        static: ${AWS_REGION:us-west-2}
       sqs:
-        endpoint: ${AWS_SQS_ENDPOINT:http://localhost:4566}
+        enabled: true
+        auto-create: false
+        listener:
+          auto-startup: false
+        queue:
+          auto-create: false
+        queue-attributes:
+          enabled: false
+      sns:
+        enabled: true
   application:
     name: order-service
   datasource:
@@ -49,8 +61,8 @@ app:
     default-payment-method: ${ORDER_PAYMENTS_METHOD:PIX}
     payment-status-queue: ${PAYMENT_STATUS_QUEUE_NAME:payment-status-queue}
   services:
-    customer-url: ${CUSTOMER_SERVICE_URL}
-    product-url: ${PRODUCT_SERVICE_URL}
+    customer-url: ${CUSTOMER_SERVICE_URL:http://0.0.0.0:8000}
+    product-url: ${PRODUCT_SERVICE_URL:http://0.0.0.0:8000}
 
 management:
   endpoints:
