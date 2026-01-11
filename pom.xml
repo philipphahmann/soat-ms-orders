@@ -169,6 +169,15 @@
                 <groupId>org.jacoco</groupId>
                 <artifactId>jacoco-maven-plugin</artifactId>
                 <version>0.8.11</version>
+                <configuration>
+                    <excludes>
+                        <exclude>**/br/com/postech/soat/openapi/**/*</exclude>
+                        <exclude>**/br/com/postech/soat/commons/**/*</exclude>
+                        <exclude>**/br/com/postech/soat/infrastructure/persistence/entity/**/*</exclude>
+                        <exclude>**/br/com/postech/soat/infrastructure/messaging/dto/**/*</exclude>
+                        <exclude>**/br/com/postech/soat/OrderServiceApplication.class</exclude>
+                        <exclude>**/*MapperImpl.class</exclude> </excludes>
+                </configuration> 
                 <executions>
                     <execution>
                         <id>prepare-agent</id>
