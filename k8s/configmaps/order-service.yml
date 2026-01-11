@@ -13,6 +13,6 @@ data:
   SPRING_DATASOURCE_DRIVER_CLASS_NAME: "org.postgresql.Driver"
 
   # --- AWS Config ---
-  AWS_REGION: "us-east-1"
+  AWS_REGION: "us-west-2"
   AWS_SNS_ENDPOINT: ""
   AWS_SQS_ENDPOINT: ""
