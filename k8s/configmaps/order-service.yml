@@ -5,8 +5,8 @@ metadata:
   namespace: soat-orders
 data:
   # --- Service Discovery (Comunicação Interna no Cluster) ---
-  CUSTOMER_SERVICE_URL: "http://customer-service-backend.customer-service.svc.cluster.local"
-  PRODUCT_SERVICE_URL: "http://products-app.products.svc.cluster.local"
+  CUSTOMER_SERVICE_URL: "http://api.soat-customers.svc.cluster.local"
+  PRODUCT_SERVICE_URL:  "http://api.soat-products.svc.cluster.local"
 
   # --- Configuração de Banco de Dados (RDS) ---
   SPRING_DATASOURCE_URL: "${SPRING_DATASOURCE_URL}"
