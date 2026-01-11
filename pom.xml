@@ -26,10 +26,15 @@
         <spring-cloud.version>2024.0.0</spring-cloud.version>
 
         <sonar.coverage.exclusions>
+            **/br/com/postech/soat/OrderServiceApplication.java,          
             **/br/com/postech/soat/openapi/**,
-            **/br/com/postech/soat/commons/**,
-            **/br/com/postech/soat/OrderServiceApplication.java,
-            **/*MapperImpl.java
+            **/br/com/postech/soat/commons/**,            
+            **/br/com/postech/soat/infrastructure/messaging/dto/**,            
+            **/br/com/postech/soat/infrastructure/persistence/entity/**,            
+            **/br/com/postech/soat/infrastructure/http/mapper/**,
+            **/br/com/postech/soat/infrastructure/persistence/mapper/**,
+            **/*MapperImpl.java,            
+            **/br/com/postech/soat/infrastructure/integration/**
         </sonar.coverage.exclusions>
     </properties>
 
@@ -179,7 +184,8 @@
                         <exclude>**/br/com/postech/soat/infrastructure/http/mapper/**/*</exclude>
                         <exclude>**/br/com/postech/soat/infrastructure/persistence/mapper/**/*</exclude>
                         <exclude>**/br/com/postech/soat/infrastructure/integration/**/*</exclude>
-                        <exclude>**/*MapperImpl.class</exclude> </excludes>
+                        <exclude>**/*MapperImpl.class</exclude> 
+                    </excludes>
                 </configuration> 
                 <executions> 
                     <execution>
