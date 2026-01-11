@@ -73,9 +73,8 @@ public class Order extends AggregateRoot<OrderId> {
     }
 
     public void calculateOriginalPrice() {
-
         this.originalPrice = orderItems.stream()
-                .map(OrderItem::getPrice)
+                .map(item -> item.getPrice().multiply(BigDecimal.valueOf(item.getQuantity())))
                 .reduce(BigDecimal.ZERO, BigDecimal::add);
     }
 
