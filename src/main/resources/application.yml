@@ -49,10 +49,11 @@ app:
     default-payment-method: ${ORDER_PAYMENTS_METHOD:PIX}
     payment-status-queue: ${PAYMENT_STATUS_QUEUE_NAME:payment-status-queue}
   services:
-    # Ambos apontam para a MESMA URL base do Kong
     customer-url: ${CUSTOMER_SERVICE_URL:http://a430eb5c6bb444b059eb8f849edb6034-1930496403.us-east-1.elb.amazonaws.com}
     product-url: ${PRODUCT_SERVICE_URL:http://a430eb5c6bb444b059eb8f849edb6034-1930496403.us-east-1.elb.amazonaws.com}
+
 management:
   endpoints:
     web:
-      base-path: /
+      exposure:
+        include: "health"
