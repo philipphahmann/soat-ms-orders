@@ -16,7 +16,10 @@ public interface OrderItemEntityMapper {
             return null;
         }
 
-        Discount discount = new Discount(orderItemEntity.getDiscountAmount());
+        Discount discount = null;
+        if (orderItemEntity.getDiscountAmount() != null) {
+            discount = new Discount(orderItemEntity.getDiscountAmount());
+        }
 
         return new OrderItem(
                 orderItemEntity.getProductId(),
