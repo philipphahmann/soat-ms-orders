@@ -29,10 +29,7 @@ public interface OrderResponseMapper {
 
     @Mapping(target = "productId", source = "productId")
     @Mapping(target = "discount", source = "discount")
-    @Mapping(target = "name", source = "name")
-    @Mapping(target = "category", expression = "java(CategoryDto.fromValue(orderItem.getCategory()))")
     @Mapping(target = "quantity", source = "quantity")
-    @Mapping(target = "price", expression = "java(orderItem.getPrice().doubleValue())")
     OrderItemDto toOrderItemDto(OrderItem orderItem);
 
     default DiscountDto toDiscountDto(Discount discount) {

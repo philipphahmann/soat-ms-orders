@@ -36,11 +36,13 @@ public class OrderItem extends AggregateRoot<OrderItemId> {
         this.discount = discount;
     }
 
-    public void updateCurrentPrice(BigDecimal currentPrice) {
-        if (currentPrice == null || currentPrice.compareTo(BigDecimal.ZERO) <= 0) {
+    public void enrichProductDetails(String name, String category, BigDecimal price) {
+        if (price == null || price.compareTo(BigDecimal.ZERO) <= 0) {
             throw new IllegalArgumentException("Preço inválido fornecido pelo catálogo de produtos");
         }
-
-        this.price = currentPrice;
+        
+        this.name = name;
+        this.category = category;
+        this.price = price;
     }
 }

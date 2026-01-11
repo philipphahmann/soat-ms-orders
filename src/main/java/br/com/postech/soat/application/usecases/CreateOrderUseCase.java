@@ -1,12 +1,15 @@
 package br.com.postech.soat.application.usecases;
 
 import br.com.postech.soat.commons.infrastructure.exception.NotFoundException;
+import br.com.postech.soat.commons.application.gateways.CustomerDto;
 import br.com.postech.soat.commons.application.gateways.CustomerGateway;
+import br.com.postech.soat.commons.application.gateways.ProductDto;
 import br.com.postech.soat.commons.application.gateways.ProductGateway;
 import br.com.postech.soat.commons.infrastructure.aop.monitorable.Monitorable;
 import br.com.postech.soat.application.command.CreateOrderCommand;
 import br.com.postech.soat.application.repositories.OrderRepository;
 import br.com.postech.soat.domain.entity.Order;
+import br.com.postech.soat.domain.entity.OrderItem;
 import br.com.postech.soat.domain.valueobject.CustomerId;
 import br.com.postech.soat.infrastructure.messaging.OrderPaymentPublisher;
 import br.com.postech.soat.infrastructure.messaging.dto.PaymentRequestedMessage;
@@ -39,16 +42,14 @@ public class CreateOrderUseCase {
     @Transactional
     public Order execute(CreateOrderCommand command) {
         try {
-            var customer = customerGateway.findCustomer(command.cpf())
+            CustomerDto customer = customerGateway.findCustomer(command.cpf())
                 .orElseThrow(() -> new NotFoundException("Cliente não encontrado: " + command.cpf()));
 
-            for (var item : command.orderItems()) {
-                // 1. Busca os dados reais no microsserviço de produtos
-                var productDto = productGateway.findProduct(item.getProductId())
+            for (OrderItem item : command.orderItems()) {
+                ProductDto productDto = productGateway.findProduct(item.getProductId())
                     .orElseThrow(() -> new NotFoundException("Produto não encontrado: " + item.getProductId()));
                 
-                // 2. Segurança: Atualiza o preço com o valor oficial
-                item.updateCurrentPrice(productDto.price());
+                item.enrichProductDetails(productDto.name(), productDto.category(), productDto.price());
             }
 
             final Order order = Order.receive(

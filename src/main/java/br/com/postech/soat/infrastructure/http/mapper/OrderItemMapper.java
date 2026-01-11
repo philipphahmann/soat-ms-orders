@@ -16,10 +16,8 @@ public interface OrderItemMapper {
     OrderItemMapper INSTANCE = Mappers.getMapper(OrderItemMapper.class);
 
     @Mapping(target = "id", ignore = true)
-    @Mapping(target = "price", expression = "java(new BigDecimal(orderItemDto.getPrice()))")
-    @Mapping(target = "discount", source = "discount")
-    @Mapping(target = "category", expression = "java(orderItemDto.getCategory() != null ? orderItemDto.getCategory().getValue() : null)")
     @Mapping(target = "productId", source = "productId")
+    @Mapping(target = "discount", source = "discount")
     OrderItem toDomain(OrderItemDto orderItemDto);
 
     @Mapping(target = "id", source = "orderItem.id.value")

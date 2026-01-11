@@ -16,11 +16,8 @@ public interface OrderItemRequestMapper {
     OrderItemRequestMapper INSTANCE = Mappers.getMapper(OrderItemRequestMapper.class);
 
     @Mapping(target = "productId", source = "productId")
-    @Mapping(target = "price", expression = "java(new BigDecimal(orderItemDto.getPrice()))")
     @Mapping(target = "discount", expression = "java(mapDiscount(orderItemDto.getDiscount()))")
-    @Mapping(target = "name", source = "name")
     @Mapping(target = "quantity", source = "quantity")
-    @Mapping(target = "category", source = "category")
     OrderItem mapFrom(OrderItemDto orderItemDto);
 
     default Discount mapDiscount(DiscountDto dto) {

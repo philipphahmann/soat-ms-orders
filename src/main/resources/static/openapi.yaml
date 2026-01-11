@@ -586,7 +586,7 @@ components:
           schema:
             type: object
             properties:
-              CustomerId:
+              customerId:
                 type: string
                 description: CPF do cliente (apenas números)
                 example: '92558374001'
@@ -611,7 +611,7 @@ components:
                   type: string
                   example: Remover a salada
             required:
-              - CustomerId
+              - customerId
               - items
           examples:
             PedidoCompleto:
@@ -619,7 +619,7 @@ components:
               description: 'Exemplo de criação de pedido com todos os dados necessários:
                 cliente, itens completos com nome, preço, categoria e quantidade'
               value:
-                CustomerId: 241fae7b-0210-4d29-a928-90653c9a9a89
+                customerId: 241fae7b-0210-4d29-a928-90653c9a9a89
                 items:
                   - productId: 441fae7b-0210-4d29-a928-90653c9a9a89
                     name: Big Mac
@@ -644,7 +644,7 @@ components:
               description: Exemplo de pedido com desconto aplicado nos itens e no
                 total
               value:
-                CustomerId: 241fae7b-0210-4d29-a928-90653c9a9a89
+                customerId: 241fae7b-0210-4d29-a928-90653c9a9a89
                 items:
                   - productId: 441fae7b-0210-4d29-a928-90653c9a9a89
                     name: Big Mac
@@ -767,7 +767,7 @@ components:
             items:
               type: object
               properties:
-                OrderId:
+                orderId:
                   $ref: '#/components/schemas/UUID'
                 customerId:
                   type: string
@@ -784,7 +784,7 @@ components:
                 status:
                   $ref: '#/components/schemas/OrderStatus'
               required:
-                - OrderId
+                - orderId
                 - customerId
                 - items
                 - discountAmountTotal
@@ -793,7 +793,7 @@ components:
           examples:
             Example 1:
               value:
-                - OrderId: 241fae7b-0210-4d29-a928-90653c9a9a89
+                - orderId: 241fae7b-0210-4d29-a928-90653c9a9a89
                   customerId: 321fae7b-0210-4d29-a928-90653c9a9a89
                   items:
                     - productId: 441fae7b-0210-4d29-a928-90653c9a9a89
@@ -812,7 +812,7 @@ components:
           schema:
             type: object
             properties:
-              OrderId:
+              orderId:
                 $ref: '#/components/schemas/UUID'
               items:
                 type: array
@@ -840,7 +840,7 @@ components:
               status:
                 $ref: '#/components/schemas/OrderStatus'
             required:
-              - OrderId
+              - orderId
               - items
               - discountAmountTotal
               - subtotal
@@ -849,7 +849,7 @@ components:
           examples:
             Example 1:
               value:
-                OrderId: 241fae7b-0210-4d29-a928-90653c9a9a89
+                orderId: 241fae7b-0210-4d29-a928-90653c9a9a89
                 items:
                   - productId: 241fae7b-0210-4d29-a928-90653c9a9a89
                     name: string
@@ -1004,10 +1004,6 @@ components:
       properties:
         productId:
           $ref: '#/components/schemas/UUID'
-        name:
-          type: string
-          description: Nome do produto
-          example: Big Mac
         quantity:
           type: integer
           format: int32
@@ -1015,18 +1011,11 @@ components:
           maximum: 100
           description: Quantidade solicitada do produto
           example: 2
-        price:
-          $ref: '#/components/schemas/Money'
-        category:
-          $ref: '#/components/schemas/Category'
         discount:
           $ref: '#/components/schemas/Discount'
       required:
         - productId
-        - name
         - quantity
-        - price
-        - category
     Category:
       type: string
       enum:
