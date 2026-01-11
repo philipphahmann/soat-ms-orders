@@ -2,7 +2,7 @@ apiVersion: v1
 kind: ConfigMap
 metadata:
   name: order-service
-  namespace: order
+  namespace: soat-orders
 data:
   # --- Service Discovery (Comunicação Interna no Cluster) ---
   CUSTOMER_SERVICE_URL: "http://customer-service-backend.customer-service.svc.cluster.local"
