@@ -36,11 +36,15 @@ public interface OrderResponseMapper {
     OrderItemDto toOrderItemDto(OrderItem orderItem);
 
     default DiscountDto toDiscountDto(Discount discount) {
+        if (discount == null) { return null; }
+
         return new DiscountDto()
                 .value(discount.getValue().doubleValue());
     }
 
     default PostOrders201ResponseDiscountsInnerDto toDiscountInnerDto(Discount discount) {
+        if (discount == null) { return null; }
+        
         return new PostOrders201ResponseDiscountsInnerDto()
                 .amount(discount.getValue().doubleValue());
     }

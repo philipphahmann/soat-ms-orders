@@ -45,7 +45,7 @@ security:
 
 app:
   messaging:
-    order-payments-topic: ${ORDER_PAYMENTS_TOPIC_ARN:arn:aws:sns:us-east-1:000000000000:order-payments}
+    order-payments-topic: ${ORDER_PAYMENTS_TOPIC_ARN:arn:aws:sns:us-west-2:082727220338:order-payments}
     default-payment-method: ${ORDER_PAYMENTS_METHOD:PIX}
     payment-status-queue: ${PAYMENT_STATUS_QUEUE_NAME:payment-status-queue}
   services:
