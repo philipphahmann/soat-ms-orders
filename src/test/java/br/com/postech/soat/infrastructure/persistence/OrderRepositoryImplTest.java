@@ -29,6 +29,7 @@ import java.util.Optional;
 import java.util.UUID;
 
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyList;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
@@ -83,5 +84,51 @@ class OrderRepositoryImplTest {
 
         Assertions.assertFalse(result.isEmpty());
         verify(orderItemJpaRepository).findByOrderId(entity.getId());
+    }
+
+    @Test
+    void findById_WhenExists_ShouldReturnOrder() {
+        // Cenário
+        UUID id = UUID.randomUUID();
+        OrderId orderId = new OrderId(id);
+        
+        OrderEntity entity = new OrderEntity();
+        entity.setId(id);
+        entity.setCustomerId(UUID.randomUUID());
+        entity.setStatus(OrderStatus.RECEIVED);
+        entity.setTotalPrice(BigDecimal.TEN);
+        entity.setDiscountAmount(BigDecimal.ZERO);
+        entity.setCreatedAt(Instant.now());
+
+        when(orderJpaRepository.findById(id)).thenReturn(Optional.of(entity));
+        // Mock dos itens é necessário pois o findById busca eles
+        when(orderItemJpaRepository.findByOrderId(id)).thenReturn(Collections.emptyList());
+
+        // Execução
+        Optional<Order> result = orderRepository.findById(orderId);
+
+        // Verificação
+        Assertions.assertTrue(result.isPresent());
+        Assertions.assertEquals(id, result.get().getId().getValue());
+        verify(orderJpaRepository).findById(id);
+        verify(orderItemJpaRepository).findByOrderId(id);
+    }
+
+    @Test
+    void findById_WhenNotExists_ShouldReturnEmpty() {
+        // Cenário
+        UUID id = UUID.randomUUID();
+        OrderId orderId = new OrderId(id);
+
+        when(orderJpaRepository.findById(id)).thenReturn(Optional.empty());
+
+        // Execução
+        Optional<Order> result = orderRepository.findById(orderId);
+
+        // Verificação
+        Assertions.assertTrue(result.isEmpty());
+        verify(orderJpaRepository).findById(id);
+        // Garante que não tentou buscar itens se o pedido não existe
+        verify(orderItemJpaRepository, never()).findByOrderId(any());
     }
 }
