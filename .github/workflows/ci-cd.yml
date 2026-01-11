@@ -62,8 +62,8 @@ jobs:
     if: (github.event_name == 'push' || github.event_name == 'workflow_dispatch') && github.ref == 'refs/heads/main'
 
     outputs:
-      image_uri_tag: ${{ steps.login-ecr.outputs.registry }}/soat-repo@${{ steps.build-image.outputs.digest }}
-      image_uri_digest: ${{ steps.login-ecr.outputs.registry }}/soat-repo:${{ github.sha }}
+      image_uri_tag: ${{ steps.login-ecr.outputs.registry }}/soat-order-service@${{ steps.build-image.outputs.digest }}
+      image_uri_digest: ${{ steps.login-ecr.outputs.registry }}/soat-order-service:${{ github.sha }}
 
     steps:
       - name: 1. Checkout do Código
@@ -88,7 +88,7 @@ jobs:
           context: .
           file: Dockerfile
           push: true
-          tags: ${{ steps.login-ecr.outputs.registry }}/soat-repo:${{ github.sha }}
+          tags: ${{ steps.login-ecr.outputs.registry }}/soat-order-service:${{ github.sha }}
           outputs: type=image
 
   deploy_to_eks:
