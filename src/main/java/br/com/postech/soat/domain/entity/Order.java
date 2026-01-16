@@ -62,8 +62,16 @@ public class Order extends AggregateRoot<OrderId> {
         this.status = OrderStatus.PAID;
     }
 
+    public void markDone() {
+        this.status = OrderStatus.DONE;
+    }
+
     public void markAwaitingPayment() {
         this.status = OrderStatus.AWAITING_PAYMENT;
+    }
+
+    public void setStatus(OrderStatus orderStatus) {
+        this.status = orderStatus;
     }
 
     public void calculateDiscount() {

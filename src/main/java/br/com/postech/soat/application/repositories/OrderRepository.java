@@ -15,4 +15,6 @@ public interface OrderRepository {
     List<Order> findActiveOrdersSorted(Set<OrderStatus> orderStatuses, Pagination pagination);
 
     Optional<Order> findById(OrderId orderId);
+
+    Order updateStatus(Order order);
 }

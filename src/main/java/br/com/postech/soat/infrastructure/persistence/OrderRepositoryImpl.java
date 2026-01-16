@@ -68,6 +68,30 @@ public class OrderRepositoryImpl implements OrderRepository {
     }
 
     @Override
+    public Order updateStatus(Order order) {
+        logger.info(
+                "Updating order status. OrderId: {}, New status: {}",
+                order.getId().getValue(),
+                order.getStatus()
+        );
+
+        OrderEntity orderEntity = orderJpaRepository.findById(order.getId().getValue())
+                .orElseThrow(() -> new RuntimeException("Order not found"));
+
+        orderEntity.setStatus(order.getStatus());
+
+        OrderEntity savedEntity = orderJpaRepository.save(orderEntity);
+
+        List<OrderItemEntity> orderItemEntities =
+                orderItemJpaRepository.findByOrderId(savedEntity.getId());
+
+        List<OrderItem> orderItems =
+                OrderItemEntityMapper.INSTANCE.toDomainList(orderItemEntities);
+
+        return OrderEntityMapper.INSTANCE.toDomain(savedEntity, orderItems);
+    }
+
+    @Override
     public Optional<Order> findById(OrderId orderId) {
         logger.debug("Finding order by id {}", orderId.getValue());
         return orderJpaRepository.findById(orderId.getValue())
