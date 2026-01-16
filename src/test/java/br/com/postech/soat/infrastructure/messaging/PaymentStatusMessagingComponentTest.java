@@ -88,5 +88,17 @@ class PaymentStatusMessagingComponentTest {
         public Optional<Order> findById(OrderId orderId) {
             return Optional.ofNullable(storage.get(orderId.getValue()));
         }
+
+        @Override
+        public Order updateStatus(Order order) {
+            Order existing = storage.get(order.getId());
+
+            if (existing == null) {
+                throw new IllegalStateException("Order not found");
+            }
+
+            existing.setStatus(order.getStatus());
+            return existing;
+        }
     }
 }

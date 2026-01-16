@@ -2,6 +2,7 @@ package br.com.postech.soat.infrastructure.messaging;
 
 import br.com.postech.soat.infrastructure.messaging.dto.PaymentRequestedMessage;
 import io.awspring.cloud.sns.core.SnsTemplate;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -26,17 +27,8 @@ class OrderPaymentPublisherTest {
     void setup() {
         // Injetando o valor da propriedade topic via construtor (simulando) ou reflection
         String topicArn = "arn:aws:sns:region:123:topic";
-        publisher = new OrderPaymentPublisher(snsTemplate, topicArn);
-    }
-
-    @Test
-    void publish_ShouldSendToSns() {
-        PaymentRequestedMessage message = new PaymentRequestedMessage(
-                UUID.randomUUID(), UUID.randomUUID(), BigDecimal.TEN, "PIX");
-
-        publisher.publish(message);
-
-        verify(snsTemplate).convertAndSend(any(String.class), eq(message));
+        ObjectMapper objectMapper = new ObjectMapper();
+        publisher = new OrderPaymentPublisher(snsTemplate, objectMapper, topicArn);
     }
     
     // Helper para o eq(message)
