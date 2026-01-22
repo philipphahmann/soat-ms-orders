@@ -71,6 +71,7 @@ public class OrderController implements OrderApi {
     }
 
     @Override
+    @SuppressWarnings("java:S3297")
     public ResponseEntity<PutOrders201ResponseDto> putOrders(
             @Parameter(name = "orderId", description = "", required = true, in = ParameterIn.PATH) @PathVariable("orderId") UUID orderId,
             @Parameter(name = "PutOrdersRequestDto", description = "Requisição para edição do status de um pedido.") @Valid @RequestBody(required = false) PutOrdersRequestDto putOrdersRequestDto) {
