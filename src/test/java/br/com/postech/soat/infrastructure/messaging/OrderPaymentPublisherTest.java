@@ -15,6 +15,9 @@ import java.util.UUID;
 
 import static org.mockito.Mockito.verify;
 
+import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.*;
+
 @ExtendWith(MockitoExtension.class)
 class OrderPaymentPublisherTest {
 
@@ -23,19 +26,45 @@ class OrderPaymentPublisherTest {
     @Mock
     private SnsTemplate snsTemplate;
 
+    @Mock
+    private ObjectMapper objectMapper;
+
+    private final String TOPIC_ARN = "arn:aws:sns:us-west-2:123456789:order-payments";
+
     @BeforeEach
     void setup() {
-        // Injetando o valor da propriedade topic via construtor (simulando) ou reflection
-        String topicArn = "arn:aws:sns:region:123:topic";
-        ObjectMapper objectMapper = new ObjectMapper();
-        publisher = new OrderPaymentPublisher(snsTemplate, objectMapper, topicArn);
+        publisher = new OrderPaymentPublisher(snsTemplate, objectMapper, TOPIC_ARN);
     }
-    
-    // Helper para o eq(message)
-    private <T> T eq(T value) {
-        return org.mockito.ArgumentMatchers.eq(value);
+
+    @Test
+    void publish_ShouldSendSnsMessage_WhenSerializationWorks() throws JsonProcessingException {
+        // Cenário
+        PaymentRequestedMessage message = new PaymentRequestedMessage(
+                UUID.randomUUID(), UUID.randomUUID(), BigDecimal.TEN, "PIX"
+        );
+        String jsonString = "{\"json\":\"mock\"}";
+        
+        when(objectMapper.writeValueAsString(message)).thenReturn(jsonString);
+
+        // Execução
+        publisher.publish(message);
+
+        // Verificação
+        verify(objectMapper).writeValueAsString(message);
+        verify(snsTemplate).convertAndSend(eq(TOPIC_ARN), eq(jsonString));
     }
-    private <T> T any(Class<T> type) {
-        return org.mockito.ArgumentMatchers.any(type);
+
+    @Test
+    void publish_ShouldThrowException_WhenSerializationFails() throws JsonProcessingException {
+        // Cenário
+        PaymentRequestedMessage message = new PaymentRequestedMessage(
+                UUID.randomUUID(), UUID.randomUUID(), BigDecimal.TEN, "PIX"
+        );
+        
+        when(objectMapper.writeValueAsString(message)).thenThrow(new JsonProcessingException("Error"){});
+
+        // Execução & Verificação
+        Assertions.assertThrows(IllegalStateException.class, () -> publisher.publish(message));
+        verify(snsTemplate, never()).convertAndSend(anyString(), anyString());
     }
 }

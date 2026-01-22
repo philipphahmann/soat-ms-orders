@@ -34,7 +34,9 @@
             **/br/com/postech/soat/infrastructure/http/mapper/**,
             **/br/com/postech/soat/infrastructure/persistence/mapper/**,
             **/*MapperImpl.java,            
-            **/br/com/postech/soat/infrastructure/integration/**
+            **/br/com/postech/soat/infrastructure/integration/**,
+            **/br/com/postech/soat/infrastructure/config/**,
+            **/br/com/postech/soat/application/command/**
         </sonar.coverage.exclusions>
     </properties>
 
@@ -184,6 +186,8 @@
                         <exclude>**/br/com/postech/soat/infrastructure/http/mapper/**/*</exclude>
                         <exclude>**/br/com/postech/soat/infrastructure/persistence/mapper/**/*</exclude>
                         <exclude>**/br/com/postech/soat/infrastructure/integration/**/*</exclude>
+                        <exclude>**/br/com/postech/soat/infrastructure/config/**/*</exclude>
+                        <exclude>**/br/com/postech/soat/application/command/**/*</exclude>
                         <exclude>**/*MapperImpl.class</exclude> 
                     </excludes>
                 </configuration> 

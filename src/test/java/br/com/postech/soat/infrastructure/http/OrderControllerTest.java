@@ -1,9 +1,12 @@
 package br.com.postech.soat.infrastructure.http;
 
 import br.com.postech.soat.application.command.CreateOrderCommand;
+import br.com.postech.soat.application.command.UpdateOrderStatusCommand;
 import br.com.postech.soat.application.repositories.OrderRepository;
 import br.com.postech.soat.application.usecases.CreateOrderUseCase;
 import br.com.postech.soat.application.usecases.ListActiveOrdersUseCase;
+import br.com.postech.soat.application.usecases.UpdateOrderStatusUseCase;
+import br.com.postech.soat.openapi.model.PutOrdersRequestDto;
 import br.com.postech.soat.commons.application.Pagination;
 import br.com.postech.soat.domain.entity.Order;
 import br.com.postech.soat.domain.entity.OrderStatus;
@@ -39,12 +42,16 @@ class OrderControllerTest {
     @Mock
     private OrderRepository orderRepository;
 
+    @Mock
+    private UpdateOrderStatusUseCase updateOrderStatusUseCase;
+
     @BeforeEach
     void setup() {
         orderController = new OrderController(createOrderUseCase, orderRepository);
         
         ListActiveOrdersUseCase listUseCaseMock = mock(ListActiveOrdersUseCase.class);
         ReflectionTestUtils.setField(orderController, "listActiveOrdersUseCase", listUseCaseMock);
+        ReflectionTestUtils.setField(orderController, "updateOrderStatusUseCase", updateOrderStatusUseCase);
     }
 
     @Test
@@ -102,5 +109,26 @@ class OrderControllerTest {
         var response = orderController.getOrders(0, 10);
 
         Assertions.assertEquals(HttpStatus.NO_CONTENT, response.getStatusCode());
+    }
+
+    @Test
+    void putOrders_ShouldReturnCreated() {
+        // Cenário
+        UUID orderId = UUID.randomUUID();
+        PutOrdersRequestDto request = new PutOrdersRequestDto();
+        request.setStatus("DONE");
+
+        Order orderMock = mock(Order.class);
+        when(orderMock.getStatus()).thenReturn(OrderStatus.DONE);
+
+        when(updateOrderStatusUseCase.execute(any(UpdateOrderStatusCommand.class))).thenReturn(orderMock);
+
+        // Execução
+        var response = orderController.putOrders(orderId, request);
+
+        // Verificação
+        Assertions.assertEquals(HttpStatus.CREATED, response.getStatusCode());
+        Assertions.assertNotNull(response.getBody());
+        Assertions.assertEquals("DONE", response.getBody().getStatus());
     }
 }

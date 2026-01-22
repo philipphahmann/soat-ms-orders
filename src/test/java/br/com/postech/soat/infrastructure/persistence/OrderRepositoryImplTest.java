@@ -13,6 +13,8 @@ import br.com.postech.soat.infrastructure.persistence.entity.OrderEntity;
 import br.com.postech.soat.infrastructure.persistence.entity.OrderItemEntity;
 import br.com.postech.soat.infrastructure.persistence.jpa.OrderItemJpaRepository;
 import br.com.postech.soat.infrastructure.persistence.jpa.OrderJpaRepository;
+import br.com.postech.soat.infrastructure.persistence.mapper.OrderEntityMapper;
+import br.com.postech.soat.infrastructure.persistence.mapper.OrderItemEntityMapper;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -130,5 +132,43 @@ class OrderRepositoryImplTest {
         verify(orderJpaRepository).findById(id);
         // Garante que não tentou buscar itens se o pedido não existe
         verify(orderItemJpaRepository, never()).findByOrderId(any());
+    }
+
+    @Test
+    void updateStatus_ShouldUpdateAndReturnOrder() {
+        // Cenário
+        UUID id = UUID.randomUUID();
+        OrderId orderId = new OrderId(id);
+        Order order = mock(Order.class);
+        when(order.getId()).thenReturn(orderId);
+        when(order.getStatus()).thenReturn(OrderStatus.DONE);
+
+        OrderEntity entity = new OrderEntity();
+        entity.setId(id);
+        entity.setStatus(OrderStatus.IN_PREPARATION); // Status antigo
+
+        when(orderJpaRepository.findById(id)).thenReturn(Optional.of(entity));
+        when(orderJpaRepository.save(any(OrderEntity.class))).thenAnswer(i -> i.getArgument(0));
+        when(orderItemJpaRepository.findByOrderId(id)).thenReturn(Collections.emptyList());
+
+        // Execução
+        Order result = orderRepository.updateStatus(order);
+
+        // Verificação
+        Assertions.assertNotNull(result);
+        Assertions.assertEquals(OrderStatus.DONE, result.getStatus());
+        verify(orderJpaRepository).save(entity);
+    }
+    
+    @Test
+    void updateStatus_ShouldThrowException_WhenOrderNotFound() {
+        UUID id = UUID.randomUUID();
+        OrderId orderId = new OrderId(id);
+        Order order = mock(Order.class);
+        when(order.getId()).thenReturn(orderId);
+
+        when(orderJpaRepository.findById(id)).thenReturn(Optional.empty());
+
+        Assertions.assertThrows(RuntimeException.class, () -> orderRepository.updateStatus(order));
     }
 }
